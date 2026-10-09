@@ -1,4 +1,4 @@
-// === LANGKAH 1 Perbaiki Kode Awal ===)
+// === LANGKAH 1 Perbaiki Kode Awal ===
 
 // FIX: Mengubah tipe data "2020" menjadi number 2020 agar dapat dilakukan operasi matematika.
 const namaUsaha = "Kopi Senja";
@@ -62,9 +62,50 @@ JAWABAN PERTANYAAN LANGKAH 1:
    Karena JavaScript bersifat case-sensitive, artinya huruf besar dan huruf kecil dianggap sebagai karakter yang berbeda dalam penamaan variabel.
 
 2. Mengapa TARIF_PAJAK = 0.12 ditolak, sementara mengubah statusBuka diperbolehkan?
-   TARIF_PAJAK ditolak karena dideklarasikan menggunakan 'const' yang nilainya bersifat tetap dan tidak boleh diubah. Sementara statusBuka dideklarasikan menggunakan 'let', sehingga nilainya fleksibel untuk diubah.
+   Karena TARIF_PAJAK ditolak karena dideklarasikan menggunakan 'const' yang nilainya bersifat tetap dan tidak boleh diubah. Sementara statusBuka dideklarasikan menggunakan 'let', sehingga nilainya fleksibel untuk diubah.
 
 3. Mengapa "2020" + 1 menghasilkan "20201", dan apa perbaikan yang kamu pilih?
-   Operator '+' pada tipe data string berfungsi sebagai penggabung teks (concatenation). Perbaikan yang dipilih adalah mengubah "2020" menjadi tipe number 2020 agar operator '+' melakukan penjumlahan matematis.
+   Karena operator '+' pada tipe data string berfungsi sebagai penggabung teks (concatenation). Perbaikan yang dipilih adalah mengubah "2020" menjadi tipe number 2020 agar operator '+' melakukan penjumlahan matematis.
+*/
+
+// === LANGKAH 2: Benahi Struktur Data  ===
+
+// Object usaha tunggal untuk mengelompokkan data identitas UMKM.
+const usaha = {
+    namaUsaha: "Coffee shop",
+    pemilik: "Rey Abditiyo",
+    kota: "Yogyakarta",
+    tahunBerdiri: 2029,
+    statusBuka: true,
+    nomorWhatsApp: "08982677818",
+    website: null
+};
+
+// Array of objects untuk menyimpan daftar produk beserta harganya.
+const daftarProduk = [
+    { nama: "Kopi Susu", harga: 18000 },
+    { nama: "Es Teh Manis", harga: 7500 },
+    { nama: "Roti Bakar", harga: 15000 },
+    { nama: "Cireng Bumbu Rujak", harga: 12000 } // Produk tambahan
+];
+
+// Mencetak data usaha dengan notasi titik dan kurung siku.
+console.log("Nama Usaha (Dot Notation): " + usaha.namaUsaha);
+console.log("Kota Usaha (Bracket Notation): " + usaha["kota"]);
+
+// Mencetak produk pertama dan terakhir menggunakan indeks array.
+console.log("Produk Pertama: " + daftarProduk[0].nama);
+console.log("Produk Terakhir: " + daftarProduk[daftarProduk.length - 1].nama);
+
+/* 
+JAWABAN PERTANYAAN LANGKAH 2:
+1. Mengapa nomor WhatsApp lebih tepat disimpan sebagai string?
+   Karena nomor telepon diawali angka '0'. Jika disimpan sebagai number, angka '0' di depan akan otomatis hilang oleh JavaScript. Selain itu, nomor telepon tidak digunakan untuk operasi matematika.
+
+2. Mengapa website diberi null, bukan dibiarkan tanpa nilai? Apa bedanya null dan undefined?
+   Karena 'null' diberikan secara sengaja untuk menandai bahwa properti website memang ada tetapi saat ini belum memiliki nilai. Bedanya, 'null' adalah nilai kosong yang disengaja oleh programmer, sedangkan 'undefined' berarti variabel yang belum diberi nilai sama sekali oleh JavaScript.
+
+3. Mengapa daftarProduk[4] tidak berisi produk ke-4, dan apa yang tercetak?
+   Karena indeks array di JavaScript dimulai dari angka 0. Produk ke-4 berada pada indeks ke-3 (`daftarProduk[3]`). Jika kita mengakses `daftarProduk[4]`, hasil yang tercetak adalah `undefined`.
 */
 
