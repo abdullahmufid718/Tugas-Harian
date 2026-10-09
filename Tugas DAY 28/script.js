@@ -74,3 +74,63 @@ console.log(totalPesanan, uangPas, jumlahMember, dapatDiskon);
 // 3. && (DAN) kedua syarat harus benar. || (ATAU) salah satu syarat saja sudah cukup. 
 //    Contoh pada kode: Pembeli sudah member (true), sehingga dengan || hasilnya tetap true meskipun total pesanan tidak lebih dari 100.000.
 
+// Langkah 3: Bikin Kasir Sendiri 
+
+const namaBarang = "Es Krim Matcha";
+const hargaSatuan = 15000;
+const TARIF_PAJAK = 0.11;
+
+let jumlahBeli = 4;
+let uangDibayar = 80000;
+
+// Hitung subtotal
+let subtotal = hargaSatuan * jumlahBeli; // 15000 * 4 = 60000
+
+// Hitung pajak
+let pajak = subtotal * TARIF_PAJAK; // 6600
+
+// Total bayar awal
+let totalBayar = subtotal + pajak; // 66600
+
+// Menggunakan minimal 2 operator penugasan ringkas (+= dan -=)
+let biayaLayanan = 3000;
+totalBayar += biayaLayanan; // Total bayar bertambah 3000 menjadi 69600
+
+let potonganPromo = 5000;
+totalBayar -= potonganPromo; // Total bayar dikurangi 5000 menjadi 64600
+
+// Hitung kembalian (Uang dibayar dikurangi total bayar)
+let kembalian = uangDibayar - totalBayar; // 80000 - 64600 = 15400
+
+// Cek apakah jumlah beli genap menggunakan %
+let jumlahGenap = jumlahBeli % 2 === 0;
+
+// 3 Variabel Boolean menggunakan operator perbandingan dan logika
+let uangCukup = uangDibayar >= totalBayar;
+let gratisOngkir = subtotal >= 50000 || jumlahBeli >= 5;
+let syaratVIP = (jumlahBeli > 2) && (subtotal > 50000); // Menggunakan tanda kurung ()
+
+// Tampilkan semua hasil dengan rapi
+console.log("Barang      : " + namaBarang);
+console.log("Jumlah      : " + jumlahBeli);
+console.log("Subtotal    : " + subtotal);
+console.log("Pajak (11%) : " + pajak);
+console.log("Total bayar : " + totalBayar);
+console.log("Uang dibayar: " + uangDibayar);
+console.log("Kembalian   : " + kembalian);
+console.log("Uang cukup? : " + uangCukup);
+console.log("Jumlah genap? : " + jumlahGenap);
+console.log("Syarat VIP? : " + syaratVIP);
+
+
+// JAWABAN PERTANYAAN DARI LANGKAH 3:
+
+// 1. Satu variabel Boolean: uangCukup
+// - Artinya mengecek apakah uang yang dibayarkan lebih besar atau sama dengan total yang harus dibayar. 
+// Hasilnya true, karena uangDibayar (80000) lebih besar daripada totalBayar (64600).
+
+// 2. Pada variabel syaratVIP: let syaratVIP = (jumlahBeli > 2) || (subtotal > 50000);
+// Hasil sebelum dan sesudah tetap true. Namun jika salah satu kondisinya tidak terpenuhi,maka penggunaan || akan tetap menghasilkan true (karena salah satunya benar), sedangkan && akan menghasilkan false.
+
+// 3. Contoh pada kondisi logika: let syaratVIP = (jumlahBeli > 2) && (subtotal > 50000);
+// Tanda kurung memastikan pengelompokan logika berjalan terpisah dengan jelas dan terhindar dari kesalahan prioritas operator.
