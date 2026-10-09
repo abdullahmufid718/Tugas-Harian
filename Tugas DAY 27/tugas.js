@@ -109,3 +109,5 @@ JAWABAN PERTANYAAN LANGKAH 2:
    Karena indeks array di JavaScript dimulai dari angka 0. Produk ke-4 berada pada indeks ke-3 (`daftarProduk[3]`). Jika kita mengakses `daftarProduk[4]`, hasil yang tercetak adalah `undefined`.
 */
 
+// === LANGKAH 3: Perhitungan dan Tampilan  ===
+
