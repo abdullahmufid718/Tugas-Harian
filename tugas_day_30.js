@@ -75,7 +75,7 @@ switch (hari) {
 // 3. Karena Di dalam struktur switch JavaScript, sifat aslinya adalah mengalir terus ke bawah setelah salah satu case cocok, 
 // kecuali jika kita menghentikannya secara manual menggunakan perintah break. Cara agar hanya satu baris yang tercetak adalah 
 // dengan menambahkan perintah break di setiap akhir case.
-
+//
 // Langkah 2: Perbaiki 5 Kesalahan :
 
 let totalBelanja = 80000;
