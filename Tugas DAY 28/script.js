@@ -2,7 +2,7 @@
 
 // Tebakan: 13
 // Hasil asli: 13 ✔
-console.log(7 + 3 * 2);
+console.log(7 + 3 * 2); 
 // Tebakan: 20
 // Hasil asli: 20 ✔
 console.log((7 + 3) * 2);
