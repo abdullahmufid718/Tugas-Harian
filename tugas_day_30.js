@@ -129,7 +129,7 @@ console.log(diskon, potonganMember, totalAkhir);
 
 // Pertanyaan (jawab di komentar):
 
-// 1.a. kesalahan di bagian Urutan Diskon: Urutan pengecekan if-else dimulai dari nominal terkecil sehingga diskon besar terlewat, diperbaiki dengan membalik urutan dari yang terbesar ke terkecil.
+// 1.a.  kesalahan di bagian Urutan Diskon: Urutan pengecekan if-else dimulai dari nominal terkecil sehingga diskon besar terlewat, diperbaiki dengan membalik urutan dari yang terbesar ke terkecil.
 // b. kesalahan di bagian Variabel Member (jenismember): Penulisan variabel menggunakan huruf kecil yang tidak konsisten dengan deklarasi atas, diperbaiki dengan menyamakan kapitalisasinya menjadi jenisMember.
 // c. kesalahan di bagian Hilangnya break pada Switch: Tidak adanya perintah break menyebabkan terjadinya fall-through, diperbaiki dengan menambahkan break di setiap akhir case.
 // d. kesalahan di bagian Operator Voucher (=): Menggunakan operator assignment = yang merusak data alih-alih membandingkan, diperbaiki dengan menggunakan operator perbandingan ketat ===.
