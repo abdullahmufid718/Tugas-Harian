@@ -283,3 +283,51 @@ console.log(`Uang Bayar    : Rp ${kasirUangBayar}`);
 // 5.Hasil if (jumlahBeli): Bernilai true (masuk ke dalam blok if) dan Hasil if (jumlahBeli > 0): Bernilai false (terlewati).
 // Kenapa berbeda? Karena -1 adalah angka negatif yang di dalam JavaScript termasuk kategori nilai Truthy (dianggap ada isinya secara eksistensi). Namun, secara logika matematika, -1 tentu saja tidak lebih besar dari 0, sehingga pengecekan perbandingan > 0 menghasilkan false.
 
+// program yang menentukan jumlah hari dalam satu bulan
+//  dari angka bulan (1 sampai 12) memakai switch
+
+let bulan = 4; // Kamu bisa mengubah angka ini dari 1 sampai 12
+let jumlahHari;
+
+switch (bulan) {
+  // Menggabungkan case untuk bulan yang memiliki 30 hari
+  case 4:
+  case 6:
+  case 9:
+  case 11:
+    jumlahHari = "30 hari";
+    break;
+
+  // Bulan 2 memiliki ketentuan khusus (28 atau 29 hari)
+  case 2:
+    jumlahHari = "28 atau 29 hari";
+    break;
+
+  // Menggabungkan case untuk bulan yang memiliki 31 hari
+  case 1:
+  case 3:
+  case 5:
+  case 7:
+  case 8:
+  case 10:
+  case 12:
+    jumlahHari = "31 hari";
+    break;
+
+  // Jika angka di luar rentang 1 sampai 12
+  default:
+    jumlahHari = "Bulan tidak valid";
+}
+
+console.log(`Bulan ke-${bulan} memiliki jumlah: ${jumlahHari}`);
+
+//   PENJELASAN KOMENTAR:
+//   Kenapa bisa menggabungkan beberapa case tanpa 'break'?
+//   Karena teknik ini dinamakan *fall-through* (mengalir ke bawah). 
+//   Saat menulis beberapa `case` secara berurutan tanpa perintah `break` 
+//   di antaranya (contoh: case 4, 6, 9, 11), JavaScript akan membaca dari atas 
+//   ke bawah hingga menemukan blok kode atau perintah `break` pertama. 
+//   Jika variabel `bulan` bernilai 4, program akan langsung "turun" melewati 
+//   case 6, 9, dan 11, lalu menjalankan kode `jumlahHari = "30 hari"` secara 
+//   bersamaan. Ini sangat efektif untuk menghindari penulisan baris kode 
+//   yang berulang-ulang ketika beberapa kondisi memiliki hasil akhir yang sama.
