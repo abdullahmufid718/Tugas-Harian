@@ -62,6 +62,7 @@ console.log(
 // Memeriksa posisi ke-2
 // ... (hingga ke-9)
 // Target ditemukan pada posisi ke-10. Pencarian dihentikan.
+//
 
 const nilai = [30, -75, 100, -43, 60, 77];
 
