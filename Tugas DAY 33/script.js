@@ -177,3 +177,249 @@ console.log(Object.keys(info)); // FIX 7: Menggunakan Object.keys() bukan Object
 // 3. Karena akun.kataSandi = undefined hanya mengubah nilai di dalam properti tersebut menjadi undefined. 
 // Tapi kotaknya (kuncinya) masih ada di dalam objek. Sedangkan delete akun.kataSandi menghapus secara total kunci 
 // beserta nilainya dari objek tersebut.
+
+// Langkah 3: Bikin Kasir Sendiri :
+
+// PROGRAM KASIR KEDAI 
+const kasirKedai = {
+  nama: "Kedai Senja",
+  kota: "Yogyakarta",
+  saldoKas: 0,
+  jamOperasional: { buka: "08:00", tutup: "21:00" },
+  
+  // Syarat 1: Minimal 5 menu dengan nama, kategori, harga, dan stok
+  menu: [
+    { nama: "Kopi Susu", kategori: "minuman", harga: 18000, stok: 10 },
+    { nama: "Es Teh", kategori: "minuman", harga: 7500, stok: 15 },
+    { nama: "Roti Bakar", kategori: "makanan", harga: 15000, stok: 4 }, // Stok tipis (< 5)
+    { nama: "Nasi Goreng", kategori: "makanan", harga: 22000, stok: 8 },
+    { nama: "Jus Jeruk", kategori: "minuman", harga: 12000, stok: 3 }  // Stok tipis (< 5)
+  ],
+  
+  keranjang: [],
+
+  // Syarat 2: Method cariHarga memakai for...of pada this.menu
+  cariHarga(namaMenu) {
+    for (let itemMenu of this.menu) {
+      if (itemMenu.nama === namaMenu) {
+        return itemMenu.harga;
+      }
+    }
+    return 0; // Jika tidak ketemu
+  },
+
+  // Syarat 3: Method tambahKeKeranjang memakai for...of, cek stok & kurangi stok
+  tambahKeKeranjang(namaMenu, jumlah) {
+    for (let itemMenu of this.menu) {
+      if (itemMenu.nama === namaMenu) {
+        // Cek apakah stok mencukupi
+        if (itemMenu.stok >= jumlah) {
+          itemMenu.stok -= jumlah; // Kurangi stok menu
+          this.keranjang.push({ nama: namaMenu, jumlah: jumlah });
+          return true;
+        } else {
+          return false; // Stok tidak cukup
+        }
+      }
+    }
+    return false; // Menu tidak ditemukan
+  },
+
+  // Syarat 4: Method hitungSubtotal memakai for...of dan memanggil this.cariHarga
+  hitungSubtotal() {
+    let subtotal = 0;
+    for (let item of this.keranjang) {
+      let hargaSatuan = this.cariHarga(item.nama);
+      subtotal += hargaSatuan * item.jumlah;
+    }
+    return subtotal;
+  },
+
+  // Syarat 5: Method hitungDiskon berdasarkan ketentuan nominal
+  hitungDiskon(subtotal) {
+    if (subtotal >= 100000) {
+      return subtotal * 0.15; // Diskon 15%
+    } else if (subtotal >= 50000) {
+      return subtotal * 0.10; // Diskon 10%
+    } else if (subtotal >= 25000) {
+      return subtotal * 0.05; // Diskon 5%
+    } else {
+      return 0;
+    }
+  },
+
+  // Syarat 6: Method cetakStruk, menggunakan for...of pada keranjang, hitung pajak 11% dari subtotal setelah diskon
+  cetakStruk() {
+    let subtotal = this.hitungSubtotal();
+    let diskon = this.hitungDiskon(subtotal);
+    let subtotalSetelahDiskon = subtotal - diskon;
+    let pajak = subtotalSetelahDiskon * 0.11;
+    let totalAkhir = subtotalSetelahDiskon + pajak;
+
+    console.log("========================================");
+    console.log(`          STRUK ${this.nama.toUpperCase()}        `);
+    console.log("========================================");
+    console.log("Daftar Pesanan:");
+    
+    let no = 1;
+    for (let item of this.keranjang) {
+      let hargaSatuan = this.cariHarga(item.nama);
+      let totalHargaItem = hargaSatuan * item.jumlah;
+      console.log(`${no}. ${item.nama} x${item.jumlah} - Rp ${totalHargaItem}`);
+      no++;
+    }
+    
+    console.log("----------------------------------------");
+    console.log(`Subtotal            : Rp ${subtotal}`);
+    console.log(`Diskon              : Rp ${diskon}`);
+    console.log(`Pajak (11%)         : Rp ${pajak}`);
+    console.log("========================================");
+    console.log(`TOTAL AKHIR         : Rp ${totalAkhir.toFixed(2)}`);
+    console.log("========================================");
+
+    // Tambahkan total akhir ke saldoKas
+    this.saldoKas += totalAkhir;
+  },
+
+  // Tambahan Method: menuMenipis() untuk mendeteksi stok < 5
+  menuMenipis() {
+    let listMenipis = [];
+    for (let itemMenu of this.menu) {
+      if (itemMenu.stok < 5) {
+        listMenipis.push(itemMenu.nama);
+      }
+    }
+    return listMenipis;
+  }
+};
+
+// Syarat 7: Properti dinamis via bracket notation & operator in / delete
+let kunciDinamis = "website";
+kasirKedai[kunciDinamis] = "www.kedaisenja.com";
+console.log("Apakah 'website' ada di kasirKedai?", kunciDinamis in kasirKedai); // true
+console.log("Nilai website:", kasirKedai.website);
+delete kasirKedai.website;
+console.log("Apakah 'website' masih ada setelah delete?", kunciDinamis in kasirKedai); // false
+
+// Syarat 8: for...in pada jamOperasional dan menu pertama
+console.log("\n--- Pasangan Kunci: Nilai dari jamOperasional ---");
+for (let kunci in kasirKedai.jamOperasional) {
+  console.log(`${kunci}: ${kasirKedai.jamOperasional[kunci]}`);
+}
+
+console.log("\n--- Pasangan Kunci: Nilai dari menu[0] ---");
+for (let kunci in kasirKedai.menu[0]) {
+  console.log(`${kunci}: ${kasirKedai.menu[0][kunci]}`);
+}
+
+// Syarat 9: Object.keys dan Object.values dari jamOperasional
+console.log("\nObject.keys jamOperasional:", Object.keys(kasirKedai.jamOperasional));
+console.log("Object.values jamOperasional:", Object.values(kasirKedai.jamOperasional));
+
+// Syarat 10: Hitung huruf kecil "a" pada kasirKedai.nama memakai for...of pada string
+let jumlahHurufA = 0;
+for (let huruf of kasirKedai.nama) {
+  if (huruf === "a") {
+    jumlahHurufA++;
+  }
+}
+console.log(`\nJumlah huruf "a" kecil pada "${kasirKedai.nama}":`, jumlahHurufA);
+
+// PENGUJIAN KASUS GAGAL (tambahKeKeranjang)
+
+console.log("\n--- Uji Kasus Gagal ---");
+// 1. Menu tidak ada
+let gagalMenu = kasirKedai.tambahKeKeranjang("Burger", 1);
+console.log("Tambah 'Burger' (Menu tidak ada):", gagalMenu); // false
+
+// 2. Jumlah melebihi stok (Roti Bakar stoknya awal 4, diminta 10)
+let gagalStok = kasirKedai.tambahKeKeranjang("Roti Bakar", 10);
+console.log("Tambah 'Roti Bakar' x10 (Melebihi stok 4):", gagalStok); // false
+
+// UJI 2 SKENARIO PEMBELIAN & MENU MENIPIS
+
+// --- Skenario 1: Pembelian Sedang (Mendapat Diskon 5% karena subtotal >= 25k) ---
+// Mengosongkan keranjang dulu jika perlu, lalu isi:
+kasirKedai.keranjang = []; 
+kasirKedai.tambahKeKeranjang("Es Teh", 2);       // 7500 x 2 = 15000
+kasirKedai.tambahKeKeranjang("Roti Bakar", 2);   // 15000 x 2 = 30000 (Sisa stok Roti Bakar jadi 4 - 2 = 2)
+// Subtotal = 45000 (>= 25000, diskon 5%)
+
+console.log("\n");
+kasirKedai.cetakStruk();
+/*
+  // Skenario 1: Es Teh x2, Roti Bakar x2
+  // Hasil struk:
+  // Subtotal: Rp 45000
+  // Diskon  : Rp 2250
+  // Pajak   : Rp 4702.5
+  // Total   : Rp 47452.5
+*/
+
+// --- Skenario 2: Pembelian Besar (Mendapat Diskon 15% karena subtotal >= 100k) ---
+kasirKedai.keranjang = []; // Reset keranjang untuk skenario 2
+kasirKedai.tambahKeKeranjang("Nasi Goreng", 3);  // 22000 x 3 = 66000
+kasirKedai.tambahKeKeranjang("Kopi Susu", 2);    // 18000 x 2 = 36000
+// Subtotal = 102000 (>= 100000, diskon 15%)
+
+console.log("\n");
+kasirKedai.cetakStruk();
+/*
+  // Skenario 2: Nasi Goreng x3, Kopi Susu x2
+  // Hasil struk:
+  // Subtotal: Rp 102000
+  // Diskon  : Rp 15300
+  // Pajak   : Rp 9537
+  // Total   : Rp 96237
+*/
+
+// --- Pengujian Method menuMenipis() Setelah Skenario Berjalan ---
+let menuStokTipis = kasirKedai.menuMenipis();
+console.log("\nMenu dengan stok menipis (< 5):", menuStokTipis);
+/*
+  // Hasil menuMenipis() setelah skenario:
+  // [ 'Roti Bakar', 'Jus Jeruk' ]
+  // Penjelasan: 
+  // - "Roti Bakar" masuk karena pada Skenario 1 dibeli sebanyak 2 buah (stok awal 4 dikurangi 2 sisa 2).
+  // - "Jus Jeruk" masuk karena stok awalnya memang sudah 3 (kurang dari 5) dan tidak tersentuh transaksi.
+  // Hasil ini bisa berbeda jika urutan atau jumlah pembelian pada skenario mengubah stok item menu secara berbeda.
+*/
+
+// Pertanyaan (jawab di komentar):
+
+// 1. perbedaan dot notation dan bracket notation? 
+// Dot Notation: Digunakan untuk mengakses properti secara langsung dengan menuliskan nama propertinya apa adanya setelah tanda titik.
+// Contoh Dot Notation dari kode: kasirKedai.nama atau kasirKedai.saldoKas. 
+// Sedangkan Bracket Notation: Digunakan dengan membungkus nama properti di dalam tanda kurung siku menggunakan string.
+// Contoh Bracket Notation dari kode: kasirKedai["jamOperasional"] atau kasirKedai[kunciDinamis] (untuk variabel dinamis).
+// jelaskan kapan bracket notation wajib dipakai = Ketika nama properti memiliki spasi, tanda hubung (-), atau karakter khusus dan 
+// Nama properti disimpan di dalam variabel atau bersifat dinamis.
+// 2. Karena kata kunci this merujuk pada objek pemilik method itu sendiri (yaitu kasirKedai).
+// Apa yang terjadi jika kata this dihapus = JavaScript akan mengira saldoKas adalah variabel biasa yang berdiri sendiri di dalam fungsi,
+// bukan properti milik objek kasirKedai. Karena variabel tersebut tidak pernah dideklarasikan di dalam fungsi, program akan mengalami crash dan memunculkan ReferenceError.
+// Buktikan dengan kode, lalu jadikan baris percobaan itu komentar dan tulis pesan errornya =
+// Baris percobaan jika this dihapus:
+// saldoKas += totalAkhir; 
+// Pesan error yang muncul di console:
+// ReferenceError: saldoKas is not defined
+// 3. beda for...of dan for...in?
+// for...of: Digunakan untuk mengambil nilai (value) secara langsung dari objek yang iterable (seperti Array atau String).
+// Sedangkan for...in: Digunakan untuk mengambil kunci atau indeks (keys/index) dari sebuah objek atau array.
+// Tunjuk satu tempat di kodemu yang memakai masing-masing :
+// Penggunaan for...of pada this.keranjang (dalam method hitungSubtotal):
+// Kenapa tidak bisa ditukar dengan for...in? Karean jika memakai for...in pada array keranjang, variabel perulangan (item) akan berisi nomor indeksnya (0, 1, 2), 
+// bukan objek item pesanan itu sendiri. Akibatnya, pemanggilan item.nama akan gagal karena indeks angka tidak memiliki properti nama.
+// Penggunaan for...in pada kasirKedai.jamOperasional:
+// Kenapa tidak bisa ditukar dengan for...of? Karena Objek biasa (jamOperasional) bukan objek yang iterable. 
+// Jika kita nekat memakai for...of di sini, JavaScript akan langsung memunculkan error TypeError: kasirKedai.jamOperasional is not iterable.
+// 4. Karena for...of secara internal dirancang hanya untuk menelusuri struktur data yang memiliki mekanisme iterator bawaan (seperti Array, String, Map, atau Set).
+// Tulis pesan errornya = TypeError: kasirKedai is not iterable
+// 5.perbedaan Object.keys dan Object.values :
+// Object.keys(): Berfungsi untuk mengambil daftar kunci (keys) dari sebuah objek dan mengembalikannya dalam bentuk array
+// Contoh kodenya : Object.keys(kasirKedai.jamOperasional) menghasilkan:[ 'buka', 'tutup' ]
+// Object.values(): Berfungsi untuk mengambil daftar nilai (values) dari sebuah objek dan mengembalikannya dalam bentuk array.
+// Contoh kodenya : Object.values(kasirKedai.jamOperasional) menghasilkan:[ '08:00', '21:00' ]
+// Karena Karena kedua method ini bertugas mengolah data dan memberikan hasilnya kembali kepada pemanggilnya agar bisa digunakan dalam perhitungan lanjutan
+// Tanpa return, fungsi akan mengembalikan nilai undefined.
+// sedangkan cetakStruk boleh tidak, karena tugas utama cetakStruk adalah menampilkan (mencetak) tampilan ke layar console, bukan menghasilkan nilai untuk diolah lagi.
+// Apa yang terjadi jika hitungSubtotal hanya memakai console.log adalah perhitungan diskon dan total akhir akan menjadi NaN (Not a Number) dan merusak seluruh struktur total belanja.
