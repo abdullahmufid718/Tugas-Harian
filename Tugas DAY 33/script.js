@@ -94,7 +94,7 @@ for (let huruf of "Kopi") {
 
                     // Outputnya : undefined
                     // Hasil aslinya : Uncaught TypeError: kopi is not iterable ✔
-for (let x of kopi) { console.log(x); }      
+// for (let x of kopi) { console.log(x); }      
 
 // Pertanyaan (jawab di komentar):
 
@@ -109,4 +109,71 @@ for (let x of kopi) { console.log(x); }
 // Karena for...of hanya bisa digunakan untuk objek yang bisa di-iterasi (iterable) secara bawaan oleh JavaScript, contohnya seperti Array, String, Map, atau Set.
 // Objek biasa ({}) seperti variabel kopi bukanlah iterable. JavaScript tidak tahu bagaimana cara mengurutkan atau meloop objek biasa menggunakan for...of secara langsung, sehingga memunculkan pesan error TypeError: kopi is not iterable.
 
-                         
+          
+// Langkah 2: Perbaiki 7 Kesalahan :
+
+const warung = {
+  nama: "Warung Senja",
+  saldoKas: 100000,
+
+  // Menambah kas. Seharusnya: setelah tambahKas(50000), saldoKas menjadi 150000
+  tambahKas(jumlah) {
+    this.saldoKas += jumlah; //FIX 1 : Menambahkan this. agar bisa merujuk ke properti milik objek warung
+  },
+
+  // Mengambil kas. Seharusnya mengembalikan sisa saldoKas
+  ambilKas(jumlah) {
+    this.saldoKas -= jumlah;
+    return this.saldoKas; //FIX 2 : Menambahkan perintah return agar bisa untuk mengembalikan nilai sisa saldoKas
+  },
+};
+
+warung.tambahKas(50000);
+console.log(warung.saldoKas);
+console.log(warung.ambilKas(30000));
+
+// Key dengan tanda hubung. Seharusnya tercetak: 08123
+const kontak = { "no-wa": "08123" };
+console.log(kontak["no-wa"]); //FIX 3: Menambahkan Bracket Notation di no-wa, karena nama kunci menggunakan tanda hubung (-)
+
+// Hapus kataSandi dari akun. Seharusnya tercetak: { nama: 'Rina' }
+const akun = { nama: "Rina", kataSandi: "abc123" };
+delete akun.kataSandi; //FIX 4: Menggunakan operator delete agar benar - benar menghapus properti dari objek.
+console.log(akun);
+
+// Cetak semua isi array, satu per baris. Seharusnya: Kopi, Teh, Roti
+const menu = ["Kopi", "Teh", "Roti"];
+for (let item of menu) { //FIX 5: Menggunakan for...of untuk mengakses elemen/isi nilai dari array.
+  console.log(item);
+}
+
+// Cetak semua properti object. Seharusnya: nama: Warung Senja dan kota: Yogyakarta
+const info = { nama: "Warung Senja", kota: "Yogyakarta" };
+for (let kolom in info) { //FIX 6: Menggunakan for..in untuk melakukan perulangan pada properti objek biasa.
+  console.log(kolom + ": " + info[kolom]);
+}
+
+// Daftar kunci object. Seharusnya: [ 'nama', 'kota' ]
+console.log(Object.keys(info)); // FIX 7: Menggunakan Object.keys() bukan Object.key().
+
+// Pertanyaan (jawab di komentar):
+
+// 1. a. Salahnya kurang menambahkan this. , perbaikannya menambahkan this.
+// b. Salahnya kurang menambahkan return, perbaikannya menambahkan return.
+// c. Salahnya kurang menambahkan Bracket Notation dan tanda 2 petik, perbaikannya menambahkan Bracket Notation dan 2 petik.
+// d. Salahnya memakai undefined, perbaikannya hapus undefined nya, lalu di tambahkan dengan delete didepan akun.kataSandi nya.
+// e. Salah menggunakan for..in, perbaikannya menggunakan for..of
+// f. Salah menggunakan for..if, perbaikannya menggunakan for..in
+// g. Salahnya kurang menambahakan s di key nya, perbaikannya menambahkan s di kata key jadi nya keys
+// 2. kesalahan yang menyebabkan error di console :
+// a. bagian tambahKas(jumlah) { saldoKas += jumlah; } (Tanpa this)
+// b. bagian console.log(kontak.no-wa);
+// c. bagian for (let kolom of info) { ... }
+// d. bagian console.log(Object.key(info));
+// mana yang tidak error tetapi hasilnya salah :
+// a. bagian ambilKas(jumlah) { this.saldoKas -= jumlah; } (Tanpa return)
+// b. bagian akun.kataSandi = undefined;
+// c. bagian for (let item in menu) { ... } pada Array
+// 3. Karena akun.kataSandi = undefined hanya mengubah nilai di dalam properti tersebut menjadi undefined. 
+// Tapi kotaknya (kuncinya) masih ada di dalam objek. Sedangkan delete akun.kataSandi menghapus secara total kunci 
+// beserta nilainya dari objek tersebut.
