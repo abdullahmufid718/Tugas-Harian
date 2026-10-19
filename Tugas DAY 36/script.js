@@ -233,3 +233,93 @@ console.log(penghitungA()); // Outputnya : hitungan 5,  Alasannya : mengira tuli
 //    = Karena adanya konsep Closure
 //    b. Kenapa penghitungB mulai dari 1 lagi?
 //    = Karena setiap kali buatPenghitung() dipanggil, JavaScript akan membuat wadah atau salinan closure baru yang sepenuhnya independen dan terpisah dari penghitungA.
+
+
+// Langkah 2: Perbaiki 8 Kesalahan :
+
+// Cek stok. Seharusnya tercetak: Stok aman
+const stok = 10;
+let pesanStok = "" // FIX 1: Memindahkan deklarasi pesanStok keluar blok agar dapat diakses oleh console.log di luar
+if (stok > 5) {
+ pesanStok = "Stok aman";
+}
+console.log(pesanStok);
+
+// Potongan 10%. Seharusnya tercetak: 45000
+function hitungPotongan(harga) {
+  const potongan = harga * 0.1;
+  return harga - potongan;
+}
+console.log(hitungPotongan(50000)); // FIX 2: Mencetak hasil pengembalian fungsi hitungPotongan karena variabel potongan bersifat local scope
+
+// Sambutan. Seharusnya tercetak: Selamat datang di Kedai Senja
+const sambutan = function () {
+  return "Selamat datang di Kedai Senja";
+};
+console.log(sambutan()); // FIX 3: Memindahkan pemanggilan function expression setelah deklarasinya, karena tidak mengalami hoisting penuh
+
+// Kota. Seharusnya tercetak: Yogyakarta
+let kota = "Yogyakarta";
+console.log(kota); // FIX 4: Memindahkan perintah console.log ke bawah deklarasi let agar terhindar dari Temporal Dead Zone
+
+// Total awal 100000. Diskon 90000 hanya dipakai di dalam blok.
+// Seharusnya setelah blok, total tetap: 100000
+var total = 100000;
+if (true) {
+  let total = 90000; // FIX 5: Mengubah var menjadi let di dalam blok agar memiliki block scope dan tidak menimpa variabel total global
+}
+console.log(total);
+
+// Saldo kas. Seharusnya setelah tambahKas(50000): 150000
+let saldoKas = 100000;
+function tambahKas(jumlah) {
+// FIX 6: Mengapus kata kunci let agar fungsi langsung memodifikasi variabel saldoKas di scope luar (menghindari shadowing)
+  saldoKas += jumlah;
+}
+tambahKas(50000);
+console.log(saldoKas);
+
+// Nomor antrean. Seharusnya tercetak: 1 2 3
+function buatAntrean() {
+  let nomor = 0; // FIX 7 : Memindahkan variabel nomor ke fungsi luar agar closure dapat mengingat dan mempertahankan nilainya
+    return function () {
+    nomor++;
+    return nomor;
+  };
+}
+const ambilNomor = buatAntrean();
+console.log(ambilNomor(), ambilNomor(), ambilNomor());
+
+// Dompet. Seharusnya setelah belanja(30000), cekSaldo() mengembalikan: 70000
+function buatDompet(saldoAwal) {
+  let saldo = saldoAwal;
+  return {
+    belanja(jumlah) {
+      saldo -= jumlah;
+    },
+    cekSaldo() {
+      return saldo; // FIX 8: Mengakses langsung variabel saldo dari closure, bukan menggunakan this.saldo
+    },
+  };
+}
+const dompet = buatDompet(100000);
+dompet.belanja(30000);
+console.log(dompet.cekSaldo());
+
+// Pertanyaan (jawab di komentar):
+
+// 1. 8 Kesalahan dan Perbaikannya : 
+// a. Cek Stok: Variabel pesanStok tidak terbaca di luar blok if $\rightarrow$ Perbaikannya: mendeklarasikan variabel di luar blok.
+// b. Potongan 10%: Mencetak variabel lokal potongan yang tidak bisa diakses di luar fungsi $\rightarrow$ Perbaikannya: mencetak langsung hasil pemanggilan fungsi hitungPotongan().
+// c. Sambutan: Memanggil Function Expression sebelum dideklarasikan $\rightarrow$ Perbaikannya: memindahkan pemanggilan fungsi ke bawah deklarasinya.
+// d. Kota: Mengakses variabel let sebelum diinisialisasi (Temporal Dead Zone) $\rightarrow$ Perbaikannya: memindahkan console.log ke bawah deklarasi variabel.
+// e. Total Awal: Penggunaan var di dalam blok membuat variabel global tertimpa $\rightarrow$ Perbaikannya: menggunakan let di dalam blok agar memiliki block scope.
+// f. Saldo Kas: Variabel global tertimpa oleh variabel lokal baru di dalam fungsi $\rightarrow$ Perbaikannya: menghapus kata kunci let di dalam fungsinya.
+// g. Nomor Antrean: Variabel nomor diletakkan di dalam fungsi inner sehingga selalu tereset $\rightarrow$ Perbaikannya: memindahkan variabel nomor ke fungsi luar agar teringat oleh closure.
+// h. Dompet: Menggunakan this.saldo untuk mengakses variabel lokal closure $\rightarrow$ Perbaikannya: mengakses langsung variabel saldo tanpa menggunakan this.
+// 2. a. Penyebab Error di Console: Nomor 3 (karena memanggil fungsi sebelum didefinisikan) dan nomor 4 (karena mengakses let sebelum inisialisasi / ReferenceError).
+// b. Tidak Error tetapi Hasil Salah: Nomor 1, 2, 5, 6, 7, dan 8 (karena kode berjalan tanpa error merah, namun output data di konsol tidak sesuai dengan yang diharapkan).
+// 3. Karena adanya penambahan kata kunci let, JavaScript menganggap bahwa kita sedang membuat variabel lokal baru yang hanya hidup di dalam fungsi tersebut, bukan memodifikasi variabel global di luar.
+// Istilah kejadian ini: Variable Shadowing (variabel di dalam "menutupi" atau menyembunyikan variabel di luar yang namanya sama).
+// 4. Karena this di dalam method objek hanya merujuk pada objek tempat ia dipanggil (dompet), bukan pada variabel lokal yang dibungkus oleh fungsi closure (buatDompet).
+// Properti saldo tidak pernah dilekatkan ke objek menggunakan this, melainkan disimpan secara privat di dalam ruang lingkup fungsi pembuatnya.
