@@ -323,3 +323,155 @@ console.log(dompet.cekSaldo());
 // Istilah kejadian ini: Variable Shadowing (variabel di dalam "menutupi" atau menyembunyikan variabel di luar yang namanya sama).
 // 4. Karena this di dalam method objek hanya merujuk pada objek tempat ia dipanggil (dompet), bukan pada variabel lokal yang dibungkus oleh fungsi closure (buatDompet).
 // Properti saldo tidak pernah dilekatkan ke objek menggunakan this, melainkan disimpan secara privat di dalam ruang lingkup fungsi pembuatnya.
+
+
+// Langkah 3: Bikin Kasir Sendiri :
+
+// PROGRAM KASIR - LANGKAH 3 (CLOSURE & FACTORY)
+
+// Syarat 1: Global scope NAMA_WARUNG dan TARIF_PAJAK
+const NAMA_WARUNG = "KEDAI MAKANAN SEDERHANA MADIUN";
+const TARIF_PAJAK = 0.11;
+
+// Syarat 2: Panggil function declaration sebelum didefinisikan (Hoisting)
+cetakJudul();
+
+function cetakJudul() {
+  console.log("========================================");
+  console.log(NAMA_WARUNG.toUpperCase());
+  console.log("========================================");
+}
+
+// Syarat 3 & 4: Function pabrik buatKasir dengan data privat (Closure)
+function buatKasir(namaKasir, modalAwal) {
+  // Data privat menggunakan let (tidak bisa diubah langsung dari luar object)
+  let saldoKas = modalAwal;
+  let jumlahTransaksi = 0;
+  let riwayat = [];
+
+  return {
+    // Syarat 5: catatPenjualan
+    catatPenjualan(namaMenu, harga, jumlah) {
+      let subtotal = harga * jumlah;
+      let pajak = subtotal * TARIF_PAJAK; // Memakai TARIF_PAJAK dari global scope tanpa parameter
+      let total = subtotal + pajak;
+
+      saldoKas += total;
+      jumlahTransaksi++;
+      riwayat.push({ namaMenu, jumlah, total });
+
+      return total;
+    },
+
+    // Syarat 6: ambilKas
+    ambilKas(jumlah) {
+      if (jumlah > saldoKas) {
+        return false;
+      }
+      saldoKas -= jumlah;
+      return true;
+    },
+
+    // Syarat 7: cekSaldo & lihatRiwayat (mengembalikan salinan dengan .slice())
+    cekSaldo() {
+      return saldoKas;
+    },
+
+    lihatRiwayat() {
+      return riwayat.slice();
+    },
+
+    // Syarat 8: ringkasan
+    ringkasan() {
+      console.log(`Kasir: ${namaKasir} | Total Transaksi: ${jumlahTransaksi} | Saldo Kas: Rp ${saldoKas.toLocaleString('id-ID')}`);
+    }
+  };
+}
+
+// Syarat 9: Membuat dua kasir dan melakukan simulasi transaksi
+const kasirPagi = buatKasir("Rina", 100000);
+const kasirMalam = buatKasir("Dodi", 50000);
+
+// Catat minimal 3 penjualan di kasir pagi
+kasirPagi.catatPenjualan("Ayam Bakar", 25000, 2);
+kasirPagi.catatPenjualan("Es Teh", 5000, 3);
+kasirPagi.catatPenjualan("Kentang Goreng", 10000, 1);
+
+// Catat minimal 2 penjualan di kasir malam
+kasirMalam.catatPenjualan("Ayam Goreng", 20000, 1);
+kasirMalam.catatPenjualan("Es Jeruk", 5000, 2);
+
+// Panggil ambilKas minimal dua kali (satu berhasil, satu gagal)
+console.log("Ambil kas Rp 30.000 (Berhasil):", kasirPagi.ambilKas(30000)); // Output: true
+console.log("Ambil kas Rp 999.000 (Gagal):", kasirPagi.ambilKas(999000)); // Output: false
+
+// Panggil ringkasan kedua kasir
+kasirPagi.ringkasan();
+kasirMalam.ringkasan();
+
+// Syarat 10: Pembuktian data privat
+console.log("\n--- PEMBUKTIAN DATA PRIVAT ---");
+console.log("Saldo awal via cekSaldo():", kasirPagi.cekSaldo());
+console.log("Mencoba mengubah saldoKas langsung dari luar menjadi 999999...");
+kasirPagi.saldoKas = 999999; // Mencoba menyusupkan properti baru dari luar
+console.log("Saldo setelah disusupi (via cekSaldo()):", kasirPagi.cekSaldo()); 
+// Hasil komentar: Saldo tetap akurat sesuai perhitungan internal (tidak berubah menjadi 999999 karena terlindungi closure).
+
+// Syarat 11: Pembuktian salinan riwayat (.slice())
+console.log("\n--- PEMBUKTIAN SALINAN RIWAYAT ---");
+const riwayatSalinan = kasirPagi.lihatRiwayat();
+console.log("Panjang riwayat asli sebelum push di salinan:", kasirPagi.lihatRiwayat().length);
+riwayatSalinan.push({ namaMenu: "Menu Palsu", jumlah: 99, total: 999999 }); // Menambahkan item ke salinan
+console.log("Panjang riwayat salinan setelah push:", riwayatSalinan.length);
+console.log("Panjang riwayat asli setelah salinan di-push:", kasirPagi.lihatRiwayat().length);
+// Hasil komentar: Panjang riwayat asli tetap aman dan tidak ikut bertambah, membuktikan lihatRiwayat() mengembalikan array baru (salinan).
+
+// Syarat 12: Function pabrik buatPenghitungDiskon (Arrow Function)
+function buatPenghitungDiskon(persen) {
+  return (harga) => harga - (harga * persen / 100);
+}
+
+const diskon10 = buatPenghitungDiskon(10);
+const diskon25 = buatPenghitungDiskon(25);
+
+console.log("\n--- SIMULASI DISKON ---");
+console.log("Harga 80000 dengan diskon 10%:", diskon10(80000)); // Output: 72000
+console.log("Harga 80000 dengan diskon 25%:", diskon25(80000)); // Output: 60000
+
+// Syarat 13: Shadowing Variable
+console.log("\n--- PEMBUKTIAN VARIABLE SHADOWING ---");
+const statusToko = "Buka (Global)";
+
+function cekStatus() {
+  const statusToko = "Tutup Sementara (Lokal)";
+  console.log("Di dalam function:", statusToko);
+}
+
+cekStatus();
+console.log("Di global scope:", statusToko);
+// Hasil komentar: 
+// Di dalam function tercetak "Tutup Sementara (Lokal)" karena variabel lokal menutupi variabel global.
+// Di global scope tercetak "Buka (Global)" karena variabel global tidak terpengaruh oleh perubahan di dalam function.
+
+// Pertanyaan (jawab di komentar):
+
+// 1. Karena saldoKas dideklarasikan menggunakan let di dalam fungsi buatKasir, bukan sebagai properti yang melekat pada objek yang dikembalikan. Variabel tersebut bersifat privat dan tersembunyi.
+// Hubungannya dengan Closure: Closure mengunci dan membungkus variabel saldoKas rapat-rapat di dalam ruang lingkup tertutup fungsi pembuatnya,
+// sehingga hanya bisa diakses dan diubah melalui method khusus (catatPenjualan, cekSaldo, dll) yang memiliki akses ke ruang lingkup tersebut, sementara dari luar objek ia sama sekali tidak terlihat (undefined).
+// 2. Karena setiap kali fungsi buatKasir() dipanggil, JavaScript membuat ruang memori dan salinan lingkungan privat yang baru dan independen. 
+// kasirPagi dan kasirMalam memiliki wadah closure masing-masing yang tidak saling terhubung, sehingga perubahan saldo di salah satu kasir tidak akan memengaruhi kasir lainnya.
+// 3. a. Variabel yang diingat: saldoKas, jumlahTransaksi, dan riwayat.
+// b. Kenapa tidak hilang? Karena method-method di dalam objek yang dikembalikan (seperti catatPenjualan dan cekSaldo) masih aktif mereferensikan variabel-variabel tersebut. 
+// Selama objek kasirnya masih digunakan, JavaScript akan menjaga variabel-variabel tersebut tetap hidup di memori (garbage collection tidak menghapusnya).
+// 4. Karena TARIF_PAJAK berada di Global Scope, yang berarti ia dapat diakses dari mana saja di dalam file program, termasuk dari dalam fungsi buatKasir maupun method di dalamnya.
+// Nama mekanismenya: Scope Chain
+// 5. Karena fungsi tersebut adalah Function Declaration, yang mengalami Hoisting penuh (seluruh deklarasi dan isi fungsinya diangkat ke baris paling atas oleh JavaScript sebelum kode dijalankan).
+// cetakJudulBaru(); // Uncaught ReferenceError: Cannot access 'cetakJudulBaru' before initialization
+// Tambahkan satu percobaan:
+// const cetakJudulBaru = function() {
+//   console.log("KEDAI");
+// };
+// cetakJudulBaru(); // Berhasil jika dipanggil setelah didefinisikan
+// Catatan: Baris pemanggilan di atas sengaja dijadikan komentar agar tidak memicu error ReferenceError di konsol.
+// 6. Dari mekanisme Closure. Saat buatPenghitungDiskon(10) dipanggil pertama kali, nilai 10 disimpan dan "diingat" di dalam ruang lingkup fungsi tersebut. Ketika variabel diskon10(80000) dipanggil kemudian, 
+// arrow function di dalamnya tetap bisa mengambil dan menggunakan angka 10 tersebut meskipun fungsi pembuat utamanya sudah lama selesai berjalan.
